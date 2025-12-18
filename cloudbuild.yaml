@@ -1,34 +1,34 @@
 steps:
-# Build Docker image
+# Step 1: Build Docker image
 - name: 'gcr.io/cloud-builders/docker'
   args:
     [
       'build',
       '-t',
-      'asia-south1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA',
       '.'
     ]
 
-# Push image to Artifact Registry
+# Step 2: Push image to Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
   args:
     [
       'push',
-      'asia-south1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
+      'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
     ]
 
-# Deploy to GKE
+# Step 3: Deploy to GKE
 - name: 'gcr.io/cloud-builders/kubectl'
   env:
-    - 'CLOUDSDK_COMPUTE_ZONE=asia-south1-a'
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
     - 'CLOUDSDK_CONTAINER_CLUSTER=task-manager-cluster'
   args:
     [
       'set',
       'image',
       'deployment/task-manager',
-      'task-manager=asia-south1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
+      'task-manager=us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
     ]
 
 images:
-- asia-south1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA
+- us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA
