@@ -1,34 +1,36 @@
+serviceAccount: 444577353972@cloudbuild.gserviceaccount.com
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
-# Step 1: Build Docker image
-- name: 'gcr.io/cloud-builders/docker'
-  args:
-    [
-      'build',
-      '-t',
-      'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA',
-      '.'
-    ]
+  # 1️⃣ Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA',
+        '.'
+      ]
 
-# Step 2: Push image to Artifact Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args:
-    [
-      'push',
-      'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
-    ]
+  # 2️⃣ Push image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
+      ]
 
-# Step 3: Deploy to GKE
-- name: 'gcr.io/cloud-builders/kubectl'
-  env:
-    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=task-manager-cluster'
-  args:
-    [
-      'set',
-      'image',
-      'deployment/task-manager',
-      'task-manager=us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
-    ]
-
-images:
-- us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA
+  # 3️⃣ Deploy to GKE
+  - name: 'gcr.io/cloud-builders/kubectl'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=task-manager-cluster'
+    args:
+      [
+        'set',
+        'image',
+        'deployment/task-manager',
+        'task-manager=us-central1-docker.pkg.dev/$PROJECT_ID/task-manager-repo/task-manager:$COMMIT_SHA'
+      ]
