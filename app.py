@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import sqlite3
 import os
 
@@ -26,6 +26,11 @@ def init_db():
         conn.close()
 
 init_db()
+
+# ---------- UI Home ----------
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 # ---------- Health Check ----------
 @app.route("/health", methods=["GET"])
@@ -93,3 +98,4 @@ def delete_task(task_id):
 # ---------- App Run ----------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
